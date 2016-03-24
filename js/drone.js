@@ -20,6 +20,7 @@ function Drone(x, z, level, field) {
 
   this.targetX = 0;
   this.targetZ = 0;
+  this.rot = 0;
 
   this.level = level;
   this.collidable = true;
