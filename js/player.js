@@ -11,7 +11,7 @@ function Player(field) {
   this.fieldZ = 0;
 
   this.collidable = true;
-  this.speed = 250;
+  this.speed = 280;
   this.height = 32;
 
   this.setupObject();
@@ -93,8 +93,8 @@ Player.prototype.move = function(dt) {
 };
 
 Player.prototype.look = function(dt) {
-  this.head.rotation.x -= this.dY * 0.1 * dt;
-  this.object.rotation.y -= this.dX * 0.1 * dt;
+  this.head.rotation.x -= this.dY * 0.002;
+  this.object.rotation.y -= this.dX * 0.002;
 
   this.head.rotation.x = Math.max(-Math.PI / 6,
       Math.min( Math.PI / 6, this.head.rotation.x));

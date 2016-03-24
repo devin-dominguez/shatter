@@ -20,11 +20,11 @@ function Game() {
 
   this.field.setup(this.player, Drone.all);
 
-  for (var i = 0; i < 16; i++) {
+  for (var i = 0; i < 48; i++) {
     Drone.spawn(
         Math.random() * World.width,
         Math.random() * World.depth,
-        0 | Math.random() * 8 + 1,
+        0 | Math.pow(Math.random(), 3) * 8 + 1,
         this.field
         );
   }
@@ -37,6 +37,7 @@ function Game() {
 }
 
 Game.prototype.update = function(dt) {
+  dt /= 2;
   this.player.update(dt);
   Entity.updateAll(Bullet, dt);
   Entity.updateAll(Drone, dt);

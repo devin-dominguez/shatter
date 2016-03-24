@@ -10,7 +10,7 @@ var DroneParticle = require('./droneParticle');
 var maxHealth = 12;
 var maxLevel = 8;
 
-var maxSpeed = 96;
+var maxSpeed = 120;
 var rotRate = 0.05;
 
 function Drone(x, z, level, field) {
@@ -45,7 +45,8 @@ Drone.spawn = function(x, z, level, field) {
 };
 
 Drone.prototype.setupObject = function(x, z) {
-  this.geometry = new THREE.IcosahedronGeometry(World.height * 0.4, 0);
+  var detail = 0 | (this.level + 1);
+  this.geometry = new THREE.SphereGeometry(World.height * 0.4, detail + 1, detail);
   this.material = new THREE.MeshBasicMaterial({
     color: World.droneColor,
     wireframe: true
@@ -76,6 +77,8 @@ Drone.prototype.setupObject = function(x, z) {
   this.updateFieldPosition();
 
   GFX.scene.add(this.object);
+
+  debugger;
 };
 
 Drone.prototype.findTargetPosition = function() {
@@ -100,7 +103,7 @@ Drone.prototype.findTargetPosition = function() {
   this.targetZ = (fieldTargetZ / this.field.depth) * World.depth;
 };
 
-Drone.prototype.rotate = function() {
+Drone.prototype.rotate = function(dt) {
   var angleToTarget = Math.atan2(
       this.targetZ - this.object.position.z,
       this.targetX - this.object.position.x
@@ -119,9 +122,8 @@ Drone.prototype.rotate = function() {
     }
   }
 
-  //this.object.rotation.y = currentAngle + rotRate * (targetAngle - currentAngle);
-  this.rot = this.rot + rotRate * (targetAngle - this.rot);
-  //this.rot = targetAngle;
+  var dRotRate = 1 - Math.pow(rotRate, dt);
+  this.rot = this.rot + dRotRate * (targetAngle - this.rot);
 };
 
 Drone.prototype.move = function(dt) {
@@ -139,7 +141,7 @@ Drone.prototype.updateFieldPosition = function() {
 
 Drone.prototype.update = function(dt) {
   this.findTargetPosition();
-  this.rotate();
+  this.rotate(dt);
   this.move(dt);
   //this.object.translateZ(this.speed * dt);
 
@@ -147,9 +149,9 @@ Drone.prototype.update = function(dt) {
   this.updateFieldPosition();
   this.bBox.update();
 
-  this.object.rotation.z += this.rotSpeed * dt;
-  this.health += this.regenRate * dt;
-  this.health = Math.min(this.startingHealth, this.health);
+  //this.object.rotation.z += this.rotSpeed * dt;
+  //this.health += this.regenRate * dt;
+  //this.health = Math.min(this.startingHealth, this.health);
 
   if (this.health <= 0) {
     this.kill();
