@@ -7,21 +7,25 @@ var Terrain = require('./terrain');
 var Bullet = require('./bullet');
 var ExplosionParticle = require('./explosionParticle');
 var Drone = require('./drone');
+var PotentialField = require('./potentialField');
 
 function Game() {
   this.paused = false;
   this.lastTime = window.performance.now();
 
 
-  this.field = new Terrain();
-  this.player = new Player();
+  this.field = new PotentialField();
+  this.terrain = new Terrain();
+  this.player = new Player(this.field);
 
-  for (var i = 0; i < 32; i++) {
+  this.field.setup(this.player, Drone.all);
+
+  for (var i = 0; i < 1; i++) {
     Drone.spawn(
         Math.random() * World.width,
         Math.random() * World.depth,
         0 | Math.random() * 8 + 1,
-        this.player.object.position
+        this.field
         );
   }
 
@@ -37,6 +41,8 @@ Game.prototype.update = function(dt) {
   Entity.updateAll(Bullet, dt);
   Entity.updateAll(Drone, dt);
   Entity.updateAll(ExplosionParticle, dt);
+
+  this.field.update();
 
   Entity.collideAllWithBox(Bullet, Drone);
 

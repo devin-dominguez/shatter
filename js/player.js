@@ -5,7 +5,11 @@ var World = require('./world');
 var Entity = require('./entity');
 var Bullet = require('./bullet');
 
-function Player() {
+function Player(field) {
+  this.field = field;
+  this.fieldX = 0;
+  this.fieldZ = 0;
+
   this.collidable = true;
   this.speed = 250;
   this.height = 32;
@@ -20,7 +24,7 @@ function Player() {
   this.dX = 0;
   this.dY = 0;
 
-  this.fireRate = 7.5;
+  this.fireRate = 9;
   this.fireDelay = 1;
   this.firing = false;
 
@@ -39,14 +43,22 @@ Player.prototype.setupObject = function() {
   this.object.position.set(World.width / 2, 0, World.depth / 2);
   this.head.position.set(0, this.height, 0);
 
+  this.updateFieldPosition();
+
   GFX.scene.add(this.object);
 };
 
+Player.prototype.updateFieldPosition = function() {
+  this.fieldX = 0 | (this.object.position.x / World.width) * this.field.width;
+  this.fieldZ = 0 | (this.object.position.z / World.depth) * this.field.depth;
+};
 
 Player.prototype.update = function(dt) {
   this.look(dt);
   this.move(dt);
   this.constrainPosition();
+
+  this.updateFieldPosition();
 
   this.fireDelay -= dt * this.fireRate;
 
