@@ -3,12 +3,16 @@ var GFX = require('./gfx');
 
 var Entity = require('./entity');
 
-function ExplosionParticle() {
+function ExplosionParticle(object) {
+  this.object = object;
+  this.material = object.material;
 
-  this.maxSpeed = this.maxSpeed || 100;
+  GFX.scene.add(this.object);
+
+  this.maxSpeed = 150;
   this.speed = this.maxSpeed;
-  this.slowDown = this.slowDown || 100;
-  this.rotSpeed = this.rotSpeed || 1;
+  this.slowDown = 10;
+  this.rotSpeed = Math.random();
 
   var directionAngle = new THREE.Euler(
       Math.random() * Math.PI * 2,
@@ -24,7 +28,6 @@ function ExplosionParticle() {
       Math.random(),
       Math.random()
       );
-
   Entity.call(this);
 }
 
@@ -32,15 +35,50 @@ ExplosionParticle.inherits(Entity);
 
 ExplosionParticle.all = [];
 
-ExplosionParticle.explode = function(pos, particleClass, particleCount) {
-  for (var i = 0; i < particleCount; i++) {
-    ExplosionParticle.all.push(new particleClass(pos));
-  }
-}
+ExplosionParticle.explode = function(object) {
+
+  object.geometry.faces.forEach(function(face) {
+    var material = object.material.clone();
+    material.transparent = true;
+
+    var geometry = new THREE.Geometry();
+    var v0 = object.geometry.vertices[face.a].clone();
+    var v1 = object.geometry.vertices[face.b].clone();
+    var v2 = object.geometry.vertices[face.c].clone();
+
+    geometry.vertices.push(v0, v1, v2);
+    geometry.faces.push(new THREE.Face3(0, 1, 2));
+
+    var triangle = new THREE.Triangle(v0, v1, v2);
+    var center = new THREE.Vector3();
+    triangle.midpoint(center);
+    geometry.applyMatrix( new THREE.Matrix4().makeTranslation(
+          -center.x,
+          -center.y,
+          -center.z)
+        );
+
+    var particle = new THREE.Mesh(geometry, material);
+    //particle.position.x = object.geometry.vertices[face.a].x;
+    //particle.position.y = object.geometry.vertices[face.a].z;
+    //particle.position.z = object.geometry.vertices[face.a].z;
+    particle.rotation.copy(object.rotation);
+    particle.position.add(object.position);
+    center.applyEuler(object.rotation, "XYZ");
+    particle.position.add(center);
+
+
+    ExplosionParticle.all.push(new ExplosionParticle(particle));
+
+
+
+  }, this);
+};
 
 ExplosionParticle.prototype.update = function(dt) {
   this.object.position.add(this.direction.clone().multiplyScalar(this.speed * dt));
   this.object.rotateOnAxis(this.rotAxis, Math.PI * 2  * this.rotSpeed * dt);
+  //this.object.translateZ(this.speed * dt);
 
   this.speed -= this.slowDown * dt;
 

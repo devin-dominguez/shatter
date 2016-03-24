@@ -5,7 +5,7 @@ var World = require('./world');
 var Entity = require('./entity');
 var Bullet = require('./bullet');
 var Player = require('./player');
-var DroneParticle = require('./droneParticle');
+var ExplosionParticle = require('./explosionParticle');
 
 var maxHealth = 12;
 var maxLevel = 8;
@@ -45,7 +45,7 @@ Drone.spawn = function(x, z, level, field) {
 };
 
 Drone.prototype.setupObject = function(x, z) {
-  var detail = 0 | (this.level + 1);
+  var detail = 0 | ((this.level + 1) / 2);
   this.geometry = new THREE.SphereGeometry(World.height * 0.4, detail + 1, detail);
   this.material = new THREE.MeshBasicMaterial({
     color: World.droneColor,
@@ -54,7 +54,7 @@ Drone.prototype.setupObject = function(x, z) {
 
   this.object = new THREE.Mesh(this.geometry, this.material);
 
-  this.coreGeometry = new THREE.IcosahedronGeometry(World.height * 0.3, 0);
+  this.coreGeometry = new THREE.SphereGeometry(World.height * 0.3, detail + 1, detail);
   this.coreMaterial = new THREE.MeshBasicMaterial({
     color: World.coreColor,
     transparent: true
@@ -78,7 +78,6 @@ Drone.prototype.setupObject = function(x, z) {
 
   GFX.scene.add(this.object);
 
-  debugger;
 };
 
 Drone.prototype.findTargetPosition = function() {
@@ -154,8 +153,8 @@ Drone.prototype.update = function(dt) {
   //this.health = Math.min(this.startingHealth, this.health);
 
   if (this.health <= 0) {
-    this.kill();
     this.explode();
+    this.kill();
   }
 
   this.core.scale.x = Math.max(0.001, this.health / maxHealth);
@@ -168,13 +167,13 @@ Drone.prototype.collide = function(entity) {
     this.health -= 1;
   }
   if (entity instanceof Player) {
-    this.kill();
     this.explode();
+    this.kill();
   }
 };
 
 Drone.prototype.explode = function() {
-  DroneParticle.explode(this.object.position);
+  ExplosionParticle.explode(this.object);
 };
 
 module.exports = Drone;

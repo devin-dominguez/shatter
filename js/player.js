@@ -76,6 +76,9 @@ Player.prototype.update = function(dt) {
     this.shoot();
     this.fireDelay = 1;
   }
+
+  //var fov = Math.max(0, -(this.vZ / this.speed)) * -22 + 25;
+  //GFX.camera.setLens(fov);
 };
 
 Player.prototype.move = function(dt) {
@@ -122,7 +125,7 @@ Player.prototype.constrainPosition = function() {
 };
 
 Player.prototype.collide = function(otherEntity) {
-  
+
 };
 
 Player.prototype.onMouseDown = function(button) {

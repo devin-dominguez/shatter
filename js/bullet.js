@@ -4,13 +4,13 @@ var World = require('./world');
 
 var Entity = require('./entity');
 
-var BulletParticle = require('./bulletParticle');
+var ExplosionParticle = require('./explosionParticle');
 
 var bulletRot = 0;
 
 function Bullet(pos, rot) {
   this.collidable = true;
-  this.speed = 550;
+  this.speed = 700;
 
   this.setupObject(pos, rot);
 
@@ -75,8 +75,7 @@ Bullet.prototype.collide = function(entity) {
 };
 
 Bullet.prototype.explode = function() {
-  //BulletParticle.explode(this.object.position);
-  BulletParticle.explode(this.object.position);
+  ExplosionParticle.explode(this.object);
 };
 
 Bullet.prototype.isInBounds = function() {
