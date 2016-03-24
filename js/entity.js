@@ -38,6 +38,15 @@ Entity.cullAll = function(entities) {
   });
 };
 
+Entity.collideAllWithSingleBox = function(entitiesA, entityB) {
+  entitiesA.all.forEach(function(entityA) {
+    if (entityA.isCollidingWithBox(entityB)) {
+      entityA.collide(entityB);
+      entityB.collide(entityA);
+    }
+  });
+};
+
 Entity.collideAllWithBox = function(entitiesA, entitiesB) {
   entitiesA.all.forEach(function(entityA) {
     entitiesB.all.forEach(function(entityB) {

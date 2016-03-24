@@ -8,8 +8,8 @@ function taxicabDistance(x1, z1, x2, z2) {
 function PotentialField() {
   this.field = [];
 
-  this.width = World.width / World.tileSize;
-  this.depth = World.width / World.tileSize;
+  this.width = 4 * World.width / World.tileSize;
+  this.depth = 4 * World.width / World.tileSize;
 }
 
 PotentialField.prototype.setup = function(player, allDrones) {

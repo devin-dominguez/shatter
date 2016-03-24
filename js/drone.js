@@ -4,6 +4,7 @@ var World = require('./world');
 
 var Entity = require('./entity');
 var Bullet = require('./bullet');
+var Player = require('./player');
 var DroneParticle = require('./droneParticle');
 
 var maxHealth = 12;
@@ -11,7 +12,6 @@ var maxLevel = 8;
 
 var maxSpeed = 96;
 var rotRate = 0.05;
-var targetAngle = Math.PI / 4;
 
 function Drone(x, z, level, field) {
   this.field = field;
@@ -24,7 +24,7 @@ function Drone(x, z, level, field) {
 
   this.level = level;
   this.collidable = true;
-  this.coreRotSpeed = Math.PI / 2.0;
+  this.rotSpeed = Math.PI / 2.0;
   this.startingHealth = (this.level / maxLevel) * maxHealth;
   this.health = this.startingHealth;
   this.regenRate = 1;
@@ -101,7 +101,6 @@ Drone.prototype.findTargetPosition = function() {
 };
 
 Drone.prototype.rotate = function() {
-  var currentAngle = this.object.rotation.y;
   var angleToTarget = Math.atan2(
       this.targetZ - this.object.position.z,
       this.targetX - this.object.position.x
@@ -109,19 +108,28 @@ Drone.prototype.rotate = function() {
 
   var targetAngle = Math.PI / 2 - angleToTarget;
 
-  currentAngle = (currentAngle + Math.PI * 2) % (Math.PI * 2);
+  this.rot = (this.rot + Math.PI * 2) % (Math.PI * 2);
   targetAngle = (targetAngle + Math.PI * 2) % (Math.PI * 2);
-  var diff = Math.abs(currentAngle - targetAngle);
+  var diff = Math.abs(this.rot - targetAngle);
   if (diff >= Math.PI) {
-    if (currentAngle > targetAngle) {
-      currentAngle -= Math.PI * 2;
+    if (this.rot > targetAngle) {
+      this.rot -= Math.PI * 2;
     } else {
       targetAngle -= Math.PI * 2;
     }
   }
 
-  this.object.rotation.y = currentAngle + rotRate * (targetAngle - currentAngle);
-  this.canMove = Math.abs(currentAngle - targetAngle) < targetAngle / 2;
+  //this.object.rotation.y = currentAngle + rotRate * (targetAngle - currentAngle);
+  this.rot = this.rot + rotRate * (targetAngle - this.rot);
+  //this.rot = targetAngle;
+};
+
+Drone.prototype.move = function(dt) {
+  var vZ = Math.cos(this.rot);
+  var vX = Math.sin(this.rot);
+
+  this.object.position.x += vX * this.speed * dt;
+  this.object.position.z += vZ * this.speed * dt;
 };
 
 Drone.prototype.updateFieldPosition = function() {
@@ -132,13 +140,14 @@ Drone.prototype.updateFieldPosition = function() {
 Drone.prototype.update = function(dt) {
   this.findTargetPosition();
   this.rotate();
-  this.object.translateZ(this.speed * dt);
+  this.move(dt);
+  //this.object.translateZ(this.speed * dt);
 
 
   this.updateFieldPosition();
   this.bBox.update();
 
-  this.core.rotation.y += this.coreRotSpeed * dt;
+  this.object.rotation.z += this.rotSpeed * dt;
   this.health += this.regenRate * dt;
   this.health = Math.min(this.startingHealth, this.health);
 
@@ -155,6 +164,10 @@ Drone.prototype.update = function(dt) {
 Drone.prototype.collide = function(entity) {
   if (entity instanceof Bullet) {
     this.health -= 1;
+  }
+  if (entity instanceof Player) {
+    this.kill();
+    this.explode();
   }
 };
 

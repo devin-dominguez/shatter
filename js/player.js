@@ -34,7 +34,15 @@ function Player(field) {
 Player.inherits(Entity);
 
 Player.prototype.setupObject = function() {
-  this.object = new THREE.Object3D();
+  this.geometry = new THREE.BoxGeometry(
+      World.height / 8,
+      World.height,
+      World.height / 8
+      );
+
+  this.material = new THREE.MeshBasicMaterial({visible: false});
+
+  this.object = new THREE.Mesh(this.geometry, this.material);
   this.head = new THREE.Object3D();
 
   this.head.add(GFX.camera);
@@ -57,6 +65,8 @@ Player.prototype.update = function(dt) {
   this.look(dt);
   this.move(dt);
   this.constrainPosition();
+
+  this.bBox.update();
 
   this.updateFieldPosition();
 
@@ -109,6 +119,10 @@ Player.prototype.constrainPosition = function() {
         World.width, this.object.position.x));
   this.object.position.z = Math.max(0, Math.min(
         World.depth, this.object.position.z));
+};
+
+Player.prototype.collide = function(otherEntity) {
+  
 };
 
 Player.prototype.onMouseDown = function(button) {

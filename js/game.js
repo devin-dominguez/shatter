@@ -20,7 +20,7 @@ function Game() {
 
   this.field.setup(this.player, Drone.all);
 
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < 16; i++) {
     Drone.spawn(
         Math.random() * World.width,
         Math.random() * World.depth,
@@ -45,6 +45,7 @@ Game.prototype.update = function(dt) {
   this.field.update();
 
   Entity.collideAllWithBox(Bullet, Drone);
+  Entity.collideAllWithSingleBox(Drone, this.player);
 
   Entity.cullAll(Bullet);
   Entity.cullAll(Drone);
