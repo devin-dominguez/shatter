@@ -36,10 +36,10 @@ ExplosionParticle.inherits(Entity);
 ExplosionParticle.all = [];
 
 ExplosionParticle.explode = function(object) {
+  var material = object.material.clone();
+  material.transparent = true;
 
   object.geometry.faces.forEach(function(face) {
-    var material = object.material.clone();
-    material.transparent = true;
 
     var geometry = new THREE.Geometry();
     var v0 = object.geometry.vertices[face.a].clone();
@@ -59,9 +59,6 @@ ExplosionParticle.explode = function(object) {
         );
 
     var particle = new THREE.Mesh(geometry, material);
-    //particle.position.x = object.geometry.vertices[face.a].x;
-    //particle.position.y = object.geometry.vertices[face.a].z;
-    //particle.position.z = object.geometry.vertices[face.a].z;
     particle.rotation.copy(object.rotation);
     particle.position.add(object.position);
     center.applyEuler(object.rotation, "XYZ");

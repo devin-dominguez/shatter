@@ -37,7 +37,7 @@ function Game() {
 }
 
 Game.prototype.update = function(dt) {
-  //dt /= 3;
+  //dt /= 8;
   this.player.update(dt);
   Entity.updateAll(Bullet, dt);
   Entity.updateAll(Drone, dt);

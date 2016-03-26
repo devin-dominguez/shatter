@@ -11,7 +11,7 @@ var maxHealth = 12;
 var maxLevel = 8;
 
 var maxSpeed = 120;
-var rotRate = 0.05;
+var rotRate = 0.1;
 
 function Drone(x, z, level, field) {
   this.field = field;
@@ -27,11 +27,16 @@ function Drone(x, z, level, field) {
   this.rotSpeed = Math.PI / 2.0;
   this.startingHealth = (this.level / maxLevel) * maxHealth;
   this.health = this.startingHealth;
-  this.regenRate = 1;
 
   this.speed = maxSpeed;
 
   this.setupObject(x, z);
+
+  this.rotAxis = new THREE.Vector3(
+      Math.random(),
+      Math.random(),
+      Math.random()
+      );
 
   Entity.call(this);
 }
@@ -45,7 +50,7 @@ Drone.spawn = function(x, z, level, field) {
 };
 
 Drone.prototype.setupObject = function(x, z) {
-  var detail = 0 | ((this.level + 1) / 2);
+  var detail = 0 | ((this.level + 1) / 1);
   this.geometry = new THREE.SphereGeometry(World.height * 0.4, detail + 1, detail);
   this.material = new THREE.MeshBasicMaterial({
     color: World.droneColor,
@@ -123,6 +128,7 @@ Drone.prototype.rotate = function(dt) {
 
   var dRotRate = 1 - Math.pow(rotRate, dt);
   this.rot = this.rot + dRotRate * (targetAngle - this.rot);
+  this.object.rotation.y = this.rot;
 };
 
 Drone.prototype.move = function(dt) {
@@ -142,15 +148,12 @@ Drone.prototype.update = function(dt) {
   this.findTargetPosition();
   this.rotate(dt);
   this.move(dt);
-  //this.object.translateZ(this.speed * dt);
+  //this.object.rotateOnAxis(this.rotAxis, Math.PI * 2 * dt * 0.25);
+  //this.object.rotation.x += dt;
 
 
   this.updateFieldPosition();
   this.bBox.update();
-
-  //this.object.rotation.z += this.rotSpeed * dt;
-  //this.health += this.regenRate * dt;
-  //this.health = Math.min(this.startingHealth, this.health);
 
   if (this.health <= 0) {
     this.explode();
