@@ -1,5 +1,5 @@
 var THREE = require('three');
-var GFX = require('./gfx');
+var GFX = require('../gfx');
 var World = require('./world');
 
 var dotSpace = 4;

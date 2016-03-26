@@ -1,5 +1,5 @@
 var THREE = require('three');
-var GFX = require('./gfx');
+var GFX = require('../../gfx');
 
 var Entity = require('./entity');
 

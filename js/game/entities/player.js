@@ -1,6 +1,6 @@
 var THREE = require('three');
-var GFX = require('./gfx');
-var World = require('./world');
+var GFX = require('../../gfx');
+var World = require('../world');
 
 var Entity = require('./entity');
 var Bullet = require('./bullet');
@@ -15,6 +15,7 @@ function Player(field) {
   this.height = 32;
 
   this.setupObject();
+  this.setupOverlay();
 
   this.moving = {};
 
@@ -54,6 +55,20 @@ Player.prototype.setupObject = function() {
   this.updateFieldPosition();
 
   GFX.scene.add(this.object);
+};
+
+Player.prototype.setupOverlay = function() {
+  this.barGeometry = new THREE.Geometry();
+  this.barGeometry.vertices.push(
+      new THREE.Vector3(-0.9, 0.1, -1),
+      new THREE.Vector3(0.2, 0.1, -1),
+      new THREE.Vector3(0.2, -0.1, -1),
+      new THREE.Vector3(-0.9, -0.1, -1),
+      new THREE.Vector3(-0.9, 0.1, -1)
+      );
+  this.bar = new THREE.Line(this.barGeometry);
+
+  this.head.add(this.bar);
 };
 
 Player.prototype.updateFieldPosition = function() {

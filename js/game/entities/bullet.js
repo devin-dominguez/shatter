@@ -1,6 +1,6 @@
 var THREE = require('three');
-var GFX = require('./gfx');
-var World = require('./world');
+var GFX = require('../../gfx');
+var World = require('../world');
 
 var Entity = require('./entity');
 
