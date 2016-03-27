@@ -32,7 +32,6 @@ window.addEventListener("resize", function(e) {
 }, false);
 
 window.addEventListener("load", function(e) {
-  setBgColor(0x111188);
 
   entry.appendChild(renderer.domElement);
   entry.appendChild(overlay);
@@ -54,5 +53,6 @@ module.exports = {
   rederer: renderer,
   element: renderer.domElement,
   render: render,
-  overlayElement: overlay
+  overlayElement: overlay,
+  setBgColor: setBgColor
 };

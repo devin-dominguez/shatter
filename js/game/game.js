@@ -62,6 +62,10 @@ Game.prototype.update = function(dt) {
   Entity.cullAll(Drone);
   Entity.cullAll(ExplosionParticle);
 
+  var bgColor = new THREE.Color(World.bgColor);
+  bgColor.lerp(new THREE.Color(World.deathColor), 1 - (this.player.health / 100));
+  GFX.setBgColor(bgColor);
+
   GFX.render();
 
   this.updateOverlay();
@@ -77,7 +81,7 @@ Game.prototype.setupOverlay = function() {
   this.overlay.barContainer.style.width = "100%";
   this.overlay.barContainer.style.margin = "20px";
   this.overlay.barContainer.style.height = "25px";
-  this.overlay.barContainer.style.border = "1px solid white";
+  this.overlay.barContainer.style.border = "1px solid black";
   this.overlay.barContainer.style.display = "flex";
   this.overlay.barContainer.style.alignItems = "center";
 
@@ -85,7 +89,7 @@ Game.prototype.setupOverlay = function() {
   this.overlay.bar.style.width = "100%";
   this.overlay.bar.style.height = "15px";
   this.overlay.bar.style.margin = " 0 5px";
-  this.overlay.bar.style.backgroundColor = "white";
+  this.overlay.bar.style.backgroundColor = "black";
 
   this.overlay.barContainer.appendChild(this.overlay.bar);
   this.overlay.container.appendChild(this.overlay.barContainer);
