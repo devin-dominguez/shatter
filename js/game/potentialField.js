@@ -36,7 +36,7 @@ PotentialField.prototype.update = function() {
 
       playerDistance /= this.width * this.depth;
       playerDistance = 1 / playerDistance;
-      this.field[x][z] -= playerDistance * 48;
+      this.field[x][z] -= playerDistance * 64;
 
       for (var droneIdx = 0; droneIdx < this.allDrones.length; droneIdx++) {
         var distance = taxicabDistance(
