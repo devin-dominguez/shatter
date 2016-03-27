@@ -1,6 +1,7 @@
 var THREE = require('three');
 var GFX = require('../../gfx');
 var World = require('../world');
+var GameData = require('../gameData');
 
 var Entity = require('./entity');
 var Bullet = require('./bullet');
@@ -14,6 +15,7 @@ var maxSpeed = 120;
 var rotRate = 0.1;
 
 function Drone(x, z, level, field) {
+  this.inBounds = false;
   this.field = field;
   this.fieldX = 0;
   this.fieldZ = 0;
@@ -70,19 +72,18 @@ Drone.prototype.setupObject = function(x, z) {
   this.core = new THREE.Mesh(this.coreGeometry, this.coreMaterial);
   this.object.add(this.core);
 
-  //this.stickGeometry = new THREE.BoxGeometry(1, 1, 60);
-  //this.stick = new THREE.Mesh(this.stickGeometry, this.coreMaterial);
-  //this.stick.position.z = 30;
-  //this.object.add(this.stick);
-
   this.object.position.x = x;
   this.object.position.y = World.height * 0.5;
   this.object.position.z = z;
 
-  this.updateFieldPosition();
-
   GFX.scene.add(this.object);
+};
 
+Drone.prototype.checkBounds = function() {
+  var x = this.object.position.x;
+  var z = this.object.position.z;
+
+  this.inBounds = (x < World.width && x > 0 && z < World.depth && z > 0);
 };
 
 Drone.prototype.findTargetPosition = function() {
@@ -145,17 +146,23 @@ Drone.prototype.updateFieldPosition = function() {
 };
 
 Drone.prototype.update = function(dt) {
-  this.findTargetPosition();
+  this.checkBounds();
+  if (this.inBounds) {
+    this.findTargetPosition();
+  } else {
+    this.targetX = World.width / 2;
+    this.targetZ = World.depth / 2;
+  }
+
   this.rotate(dt);
   this.move(dt);
-  //this.object.rotateOnAxis(this.rotAxis, Math.PI * 2 * dt * 0.25);
-  //this.object.rotation.x += dt;
 
 
   this.updateFieldPosition();
   this.bBox.update();
 
   if (this.health <= 0) {
+    GameData.droneDestroyed(this.level);
     this.explode();
     this.kill();
   }

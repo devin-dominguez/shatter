@@ -39,13 +39,15 @@ PotentialField.prototype.update = function() {
       this.field[x][z] -= playerDistance * 64;
 
       for (var droneIdx = 0; droneIdx < this.allDrones.length; droneIdx++) {
-        var distance = taxicabDistance(
-            x, z,
-            this.allDrones[droneIdx].fieldX, this.allDrones[droneIdx].fieldZ
-            );
-        distance /= this.width * this.depth;
-        distance = 1 / distance;
-        this.field[x][z] += distance;
+        if (this.allDrones[droneIdx].inBounds) {
+          var distance = taxicabDistance(
+              x, z,
+              this.allDrones[droneIdx].fieldX, this.allDrones[droneIdx].fieldZ
+              );
+          distance /= this.width * this.depth;
+          distance = 1 / distance;
+          this.field[x][z] += distance;
+        }
       }
     }
   }

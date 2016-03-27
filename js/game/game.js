@@ -2,6 +2,7 @@ var THREE = require('three');
 var GFX = require('../gfx');
 
 var World = require('./world');
+var GameData = require('./gameData');
 
 var Terrain = require('./terrain');
 var PotentialField = require('./potentialField');
@@ -13,8 +14,10 @@ var Bullet = require('./entities/bullet');
 var ExplosionParticle = require('./entities/explosionParticle');
 
 function Game() {
-  this.score = 0;
-  this.level = 1;
+  GameData.init();
+
+  this.gameSpeed = 1;
+  this.fov = 75;
 
   this.field = new PotentialField();
   this.terrain = new Terrain();
@@ -24,7 +27,7 @@ function Game() {
 
   this.setupOverlay();
 
-  for (var i = 0; i < 32; i++) {
+  for (var i = 0; i < 12; i++) {
     Drone.spawn(
         Math.random() * World.width,
         Math.random() * World.depth,
@@ -32,7 +35,6 @@ function Game() {
         this.field
         );
   }
-
 }
 
 Game.prototype.end = function() {
@@ -47,7 +49,15 @@ Game.prototype.end = function() {
 };
 
 Game.prototype.update = function(dt) {
-  //dt /= 8;
+  if (GameData.slow) {
+    this.fov = this.fov + 0.004 * (179 -  this.fov);
+    this.gameSpeed = this.gameSpeed + 0.01 * (GameData.slowFactor - this.gameSpeed);
+  } else {
+    this.fov = this.fov + 0.25 * (75 -  this.fov);
+    this.gameSpeed = this.gameSpeed + 0.1 * (1.0 - this.gameSpeed);
+  }
+
+  dt /= this.gameSpeed;
   this.player.update(dt);
   Entity.updateAll(Bullet, dt);
   Entity.updateAll(Drone, dt);
@@ -63,12 +73,18 @@ Game.prototype.update = function(dt) {
   Entity.cullAll(ExplosionParticle);
 
   var bgColor = new THREE.Color(World.bgColor);
-  bgColor.lerp(new THREE.Color(World.deathColor), 1 - (this.player.health / 100));
+  bgColor.lerp(new THREE.Color(World.deathColor), 1 - (GameData.health / 100));
   GFX.setBgColor(bgColor);
 
-  GFX.render();
+  if (GFX.camera.fov !== this.fov) {
+    GFX.camera.fov = this.fov;
+    GFX.camera.updateProjectionMatrix();
+  }
 
+  GFX.render();
   this.updateOverlay();
+
+  GameData.update(dt);
 };
 
 Game.prototype.setupOverlay = function() {
@@ -97,7 +113,7 @@ Game.prototype.setupOverlay = function() {
 };
 
 Game.prototype.updateOverlay = function() {
-  this.overlay.bar.style.width = this.player.health + "%";
+  this.overlay.bar.style.width = GameData.health + "%";
 };
 
 Game.prototype.onMouseMove = function(x, y) {
@@ -113,11 +129,19 @@ Game.prototype.onMouseUp = function(button) {
 };
 
 Game.prototype.onKeyDown = function(key) {
-  this.player.onKeyDown(key);
+  if (key === 32) {
+    GameData.slow = true;
+  } else {
+    this.player.onKeyDown(key);
+  }
 };
 
 Game.prototype.onKeyUp = function(key) {
-  this.player.onKeyUp(key);
+  if (key === 32) {
+    GameData.slow = false;
+  } else {
+    this.player.onKeyUp(key);
+  }
 };
 
 module.exports = Game;

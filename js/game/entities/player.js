@@ -2,6 +2,8 @@ var THREE = require('three');
 var GFX = require('../../gfx');
 var World = require('../world');
 
+var GameData = require('../gameData');
+
 var Entity = require('./entity');
 var Bullet = require('./bullet');
 
@@ -76,12 +78,6 @@ Player.prototype.update = function(dt) {
     this.shoot();
     this.fireDelay = 1;
   }
-
-  this.health -= dt;
-
-  if (this.health <= 0) {
-    this.health = 0;
-  }
 };
 
 Player.prototype.move = function(dt) {
@@ -126,8 +122,8 @@ Player.prototype.constrainPosition = function() {
         World.depth, this.object.position.z));
 };
 
-Player.prototype.collide = function(otherEntity) {
-  this.health -= 10;
+Player.prototype.collide = function(drone) {
+  GameData.playerHit(drone.level);
 };
 
 Player.prototype.onMouseDown = function(button) {

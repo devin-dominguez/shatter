@@ -9,7 +9,7 @@ var scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x000000, 0.1, 1024);
 
 var camera = new THREE.PerspectiveCamera(
-    75,
+    90,
     window.innerWidth / window.innerHeight,
     0.1,
     1024
