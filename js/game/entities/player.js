@@ -7,27 +7,23 @@ var Bullet = require('./bullet');
 
 function Player(field) {
   this.field = field;
-  this.fieldX = 0;
-  this.fieldZ = 0;
-
   this.collidable = true;
   this.speed = 280;
   this.height = 32;
+  this.fireRate = 9;
 
-  this.setupObject();
-  this.setupOverlay();
-
-  this.moving = {};
-
+  this.health = 100;
   this.vZ = 0;
   this.vX = 0;
 
   this.dX = 0;
   this.dY = 0;
 
-  this.fireRate = 9;
   this.fireDelay = 1;
   this.firing = false;
+  this.moving = {};
+
+  this.setupObject();
 
   Entity.call(this);
 }
@@ -49,26 +45,15 @@ Player.prototype.setupObject = function() {
   this.head.add(GFX.camera);
   this.object.add(this.head);
 
-  this.object.position.set(World.width / 2, 0, World.depth / 2);
   this.head.position.set(0, this.height, 0);
 
+  this.object.position.set(World.width / 2, 0, World.depth / 2);
+
+  this.fieldX = 0;
+  this.fieldZ = 0;
   this.updateFieldPosition();
 
   GFX.scene.add(this.object);
-};
-
-Player.prototype.setupOverlay = function() {
-  this.barGeometry = new THREE.Geometry();
-  this.barGeometry.vertices.push(
-      new THREE.Vector3(-0.9, 0.1, -1),
-      new THREE.Vector3(0.2, 0.1, -1),
-      new THREE.Vector3(0.2, -0.1, -1),
-      new THREE.Vector3(-0.9, -0.1, -1),
-      new THREE.Vector3(-0.9, 0.1, -1)
-      );
-  this.bar = new THREE.Line(this.barGeometry);
-
-  this.head.add(this.bar);
 };
 
 Player.prototype.updateFieldPosition = function() {
@@ -92,8 +77,11 @@ Player.prototype.update = function(dt) {
     this.fireDelay = 1;
   }
 
-  //var fov = Math.max(0, -(this.vZ / this.speed)) * -22 + 25;
-  //GFX.camera.setLens(fov);
+  this.health -= dt;
+
+  if (this.health <= 0) {
+    this.health = 0;
+  }
 };
 
 Player.prototype.move = function(dt) {
@@ -104,7 +92,6 @@ Player.prototype.move = function(dt) {
   if (this.moving.backwards) { this.vZ = this.speed; }
   if (this.moving.left) { this.vX = -this.speed; }
   if (this.moving.right) { this.vX = this.speed; }
-
 
   this.object.translateZ(this.vZ * dt);
   this.object.translateX(this.vX * dt);
@@ -140,7 +127,7 @@ Player.prototype.constrainPosition = function() {
 };
 
 Player.prototype.collide = function(otherEntity) {
-
+  this.health -= 10;
 };
 
 Player.prototype.onMouseDown = function(button) {

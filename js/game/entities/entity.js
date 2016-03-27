@@ -25,6 +25,11 @@ Entity.prototype.isCollidingWithPoint = function(otherEntity) {
     this.bBox.box.containsPoint(otherEntity.object.position);
 };
 
+Entity.killAll = function(entities) {
+  entities.all.forEach(function(entity) {
+    entity.kill();
+  });
+};
 
 Entity.updateAll = function(entities, dt) {
   entities.all.forEach(function(entity) {

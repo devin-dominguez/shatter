@@ -2,7 +2,6 @@ var GFX = require('./gfx');
 var Game = require('./game/game');
 
 function App() {
-  this.state = "GAMEPLAY";
   this.lastTime = window.performance.now();
 
   document.addEventListener("keydown", this.onKeyDown.bind(this), true);
@@ -11,11 +10,32 @@ function App() {
   GFX.element.addEventListener("mouseup", this.onMouseUp.bind(this), true);
   GFX.element.addEventListener("mousemove", this.onMouseMove.bind(this), true);
 
-  this.game = new Game();
+  this.setState("GAMEPLAY");
 }
 
-App.prototype.render = function() {
-  window.requestAnimationFrame(this.render.bind(this));
+
+App.prototype.setState = function(state) {
+  // leave current state
+  switch (this.state) {
+    case "GAMEPLAY":
+      this.currentScore = this.game.score;
+      this.game.end();
+      delete this.game;
+      break;
+  }
+
+  // enter new state
+  switch (state) {
+    case "GAMEPLAY":
+    this.game = new Game();
+    break;
+  }
+
+  this.state = state;
+};
+
+App.prototype.update = function() {
+  window.requestAnimationFrame(this.update.bind(this));
   var currentTime = window.performance.now();
   var dt = (currentTime - this.lastTime) / 1000;
   this.lastTime = currentTime;

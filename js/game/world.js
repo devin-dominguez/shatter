@@ -1,10 +1,11 @@
 module.exports = {
-  width: 1024,
-  depth: 1024,
+  width: 768,
+  depth: 768,
   height: 64,
   tileSize: 64,
 
-  droneColor: 0x0000ff,
-  coreColor: 0x6666aa,
-  bulletColor: 0xff0000
+  droneColor: 0x000000,
+  coreColor: 0x000000,
+  bulletColor: 0x000000,
+  terrainColor: 0x33dddd
 };

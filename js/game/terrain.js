@@ -29,10 +29,25 @@ function Terrain() {
   }
 
 
-  this.material = new THREE.PointsMaterial({sizeAttenuation: false});
+  this.material = new THREE.PointsMaterial({
+    sizeAttenuation: false,
+    color: World.terrainColor
+  });
+
   this.object = new THREE.Points(this.geometry, this.material);
 
   GFX.scene.add(this.object);
+  //this.setupObject();
 }
+
+Terrain.prototype.setupObject = function() {
+  var geometry = new THREE.Geometry();
+  var obj = new THREE.LineSegments(geometry);
+  GFX.scene.add(obj);
+};
+
+Terrain.prototype.kill = function() {
+  GFX.scene.remove(this.object);
+};
 
 module.exports = Terrain;
