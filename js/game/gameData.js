@@ -11,17 +11,17 @@ GameData.init = function() {
 };
 
 GameData.droneDestroyed = function(droneLevel) {
-  this.health += droneLevel * 2;
+  this.health += droneLevel * 0.75;
 };
 
 GameData.playerHit = function(droneLevel) {
-  this.health -= 15 + (droneLevel * 0.25);
+  this.health -= 16 + droneLevel * 2;
 };
 
 GameData.update = function(dt) {
-  var drain = 1 + this.level * 0.0125;
+  var drain = 1 + this.level * 0.0625;
   if (this.slow) {
-    this.health -= drain * dt * Math.pow(GameData.slowFactor, 2) * 0.25;
+    this.health -= drain * dt * Math.pow(GameData.slowFactor, 2) * 0.125;
   } else {
     this.health -= drain * dt;
   }
