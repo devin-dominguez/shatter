@@ -68,7 +68,7 @@ Game.prototype.update = function(dt) {
   Entity.cullAll(Drone);
   Entity.cullAll(ExplosionParticle);
 
-  if (Drone.all.length <= this.numDrones / 4) {
+  if (Drone.all.length <= this.numDrones * 0.5) {
     GameData.nextLevel();
     this.spawnWave();
   }

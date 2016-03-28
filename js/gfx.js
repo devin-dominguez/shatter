@@ -6,7 +6,7 @@ overlay.style.position = "absolute";
 overlay.style.width = "100%";
 
 var scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x000000, 0.1, 1024);
+scene.fog = new THREE.Fog(0x8888cc, 0.1, 1024);
 
 var camera = new THREE.PerspectiveCamera(
     90,
@@ -32,6 +32,7 @@ window.addEventListener("resize", function(e) {
 }, false);
 
 window.addEventListener("load", function(e) {
+  setBgColor(0x8888cc);
 
   entry.appendChild(renderer.domElement);
   entry.appendChild(overlay);

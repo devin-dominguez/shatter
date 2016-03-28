@@ -66,16 +66,12 @@ ExplosionParticle.explode = function(object) {
 
 
     ExplosionParticle.all.push(new ExplosionParticle(particle));
-
-
-
   }, this);
 };
 
 ExplosionParticle.prototype.update = function(dt) {
   this.object.position.add(this.direction.clone().multiplyScalar(this.speed * dt));
   this.object.rotateOnAxis(this.rotAxis, Math.PI * 2  * this.rotSpeed * dt);
-  //this.object.translateZ(this.speed * dt);
 
   this.speed -= this.slowDown * dt;
 

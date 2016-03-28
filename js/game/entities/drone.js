@@ -8,8 +8,8 @@ var Bullet = require('./bullet');
 var Player = require('./player');
 var ExplosionParticle = require('./explosionParticle');
 
-var maxHealth = 12;
-var maxLevel = 8;
+var maxHealth = 16;
+var maxLevel = 12;
 
 var maxSpeed = 120;
 var normalSpeed = 120;
@@ -25,10 +25,10 @@ function Drone(x, z, level, field) {
   this.targetZ = 0;
   this.rot = 0;
 
-  this.level = level;
+  this.level = Math.min(level, maxLevel);
   this.collidable = true;
   this.rotSpeed = Math.PI / 2.0;
-  this.startingHealth = (this.level / maxLevel) * maxHealth;
+  this.startingHealth = Math.floor((this.level / maxLevel) * maxHealth);
   this.health = this.startingHealth;
 
   this.speed = maxSpeed;
@@ -62,7 +62,7 @@ Drone.prototype.setupObject = function(x, z) {
 
   this.object = new THREE.Mesh(this.geometry, this.material);
 
-  this.coreGeometry = new THREE.SphereGeometry(World.height * 0.3, detail + 1, detail);
+  this.coreGeometry = new THREE.SphereGeometry(World.height * 0.4, detail + 1, detail);
   this.coreMaterial = new THREE.MeshBasicMaterial({
     color: World.coreColor,
     transparent: true
@@ -114,8 +114,8 @@ Drone.prototype.findTargetPosition = function() {
     }
   }
 
-  this.targetX = ((fieldTargetX) / this.field.width) * World.width;
-  this.targetZ = ((fieldTargetZ) / this.field.depth) * World.depth;
+  this.targetX = ((fieldTargetX + 0.5) / this.field.width) * World.width;
+  this.targetZ = ((fieldTargetZ + 0.5) / this.field.depth) * World.depth;
 };
 
 Drone.prototype.rotate = function(dt) {

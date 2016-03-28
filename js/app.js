@@ -1,6 +1,9 @@
 var GFX = require('./gfx');
+var Title = require('./title');
 var Game = require('./game/game');
+var DeathScreen = require('./death');
 var GameData = require('./game/gameData');
+
 
 function App() {
   this.lastTime = window.performance.now();
@@ -11,7 +14,9 @@ function App() {
   GFX.element.addEventListener("mouseup", this.onMouseUp.bind(this), true);
   GFX.element.addEventListener("mousemove", this.onMouseMove.bind(this), true);
 
-  this.setState("GAMEPLAY");
+  this.setState("TITLE");
+  GameData.init();
+  GFX.render();
 }
 
 
@@ -19,20 +24,37 @@ App.prototype.setState = function(state) {
   // leave current state
   switch (this.state) {
     case "GAMEPLAY":
-      this.currentScore = this.game.score;
       this.game.end();
       delete this.game;
+      break;
+
+    case "DEATH":
+      this.death.end();
+      delete this.death;
+      break;
+
+    case "TITLE":
+      this.title.end();
+      delete this.title;
       break;
   }
 
   // enter new state
-  switch (state) {
+  this.state = state;
+  switch (this.state) {
     case "GAMEPLAY":
     this.game = new Game();
     break;
+
+    case "DEATH":
+    this.death = new DeathScreen();
+    break;
+
+    case "TITLE":
+    this.title = new Title();
+    break;
   }
 
-  this.state = state;
 };
 
 App.prototype.update = function() {
@@ -95,6 +117,16 @@ App.prototype.onKeyDown = function(e) {
   switch (this.state) {
     case "GAMEPLAY":
       this.game.onKeyDown(e.keyCode);
+      break;
+    case "DEATH":
+      if (e.keyCode === 13) {
+        this.setState("TITLE");
+      }
+      break;
+    case "TITLE":
+      if (e.keyCode === 13) {
+        this.setState("GAMEPLAY");
+      }
       break;
   }
 };

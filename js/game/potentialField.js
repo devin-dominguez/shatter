@@ -8,8 +8,8 @@ function taxicabDistance(x1, z1, x2, z2) {
 function PotentialField() {
   this.field = [];
 
-  this.width = World.numTiles * 2;
-  this.depth = World.numTiles * 2;
+  this.width = World.numTiles * 4;
+  this.depth = World.numTiles * 4;
 }
 
 PotentialField.prototype.setup = function(player, allDrones) {
@@ -26,6 +26,9 @@ PotentialField.prototype.initField = function() {
 };
 
 PotentialField.prototype.update = function() {
+  var drones = this.allDrones.filter(function(drone) {
+    return drone.inBounds;
+  });
   for (var x = 0; x < this.width; x++) {
     for (var z = 0; z < this.depth; z++) {
       this.field[x][z] = 0;
@@ -36,25 +39,19 @@ PotentialField.prototype.update = function() {
 
       playerDistance /= this.width * this.depth;
       playerDistance = 1 / playerDistance;
-      this.field[x][z] -= playerDistance * this.allDrones.length;
+      this.field[x][z] -= playerDistance * drones.length;
 
-      for (var droneIdx = 0; droneIdx < this.allDrones.length; droneIdx++) {
-        if (this.allDrones[droneIdx].inBounds) {
-          var distance = taxicabDistance(
-              x, z,
-              this.allDrones[droneIdx].fieldX, this.allDrones[droneIdx].fieldZ
-              );
-          distance /= this.width + this.depth;
-          distance = 1 / distance;
-          this.field[x][z] += distance;
-        }
+      for (var droneIdx = 0; droneIdx < drones.length; droneIdx++) {
+        var distance = taxicabDistance(
+            x, z,
+            drones[droneIdx].fieldX, drones[droneIdx].fieldZ
+            );
+        distance /= this.width + this.depth;
+        distance = 1 / distance;
+        this.field[x][z] += distance;
       }
     }
   }
-
-  this.allDrones.forEach(function(drone) {
-
-  }, this);
 
 
 };
