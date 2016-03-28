@@ -21,10 +21,10 @@ DeathScreen.prototype.setupOverlay = function() {
   this.overlay.scoreContainer = document.createElement("div");
 
   this.overlay.score = document.createElement("span");
-  this.overlay.score.innerHTML = "TIME=" + GameData.currentScore.toFixed(2) + " ";
+  this.overlay.score.innerHTML = "TIME = " + GameData.currentScore.toFixed(2) + " ";
 
   this.overlay.best = document.createElement("span");
-  this.overlay.best.innerHTML = "BEST=" + GameData.bestScore.toFixed(2) + " ";
+  this.overlay.best.innerHTML = "BEST = " + GameData.bestScore.toFixed(2);
 
   this.overlay.next = document.createElement("span");
   this.overlay.next.innerHTML = "PRESS ENTER TO CONTINUE";

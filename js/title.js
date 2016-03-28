@@ -23,19 +23,19 @@ Title.prototype.setupOverlay = function() {
   this.overlay.instructions.style.flexDirection = "column";
 
   this.overlay.move = document.createElement("span");
-  this.overlay.move.innerHTML = "&nbsp;WASD -> MOVE";
+  this.overlay.move.innerHTML = "&nbsp;WASD = MOVE";
 
   this.overlay.look = document.createElement("span");
-  this.overlay.look.innerHTML = "MOUSE -> LOOK";
+  this.overlay.look.innerHTML = "MOUSE = LOOK";
 
   this.overlay.shoot = document.createElement("span");
-  this.overlay.shoot.innerHTML = "CLICK -> SHOOT";
+  this.overlay.shoot.innerHTML = "CLICK = SHOOT";
 
   this.overlay.warp = document.createElement("span");
-  this.overlay.warp.innerHTML = "SPACE -> WARP TIME AND SPACE";
+  this.overlay.warp.innerHTML = "SPACE = TIMEWARP";
 
   this.overlay.start = document.createElement("span");
-  this.overlay.start.innerHTML = "PRESS ENTER TO BEGIN";
+  this.overlay.start.innerHTML = "ENTER = BEGIN";
 
 
   this.overlay.instructions.appendChild(this.overlay.move);
