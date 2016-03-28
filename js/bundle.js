@@ -114,16 +114,16 @@
 	  this.state = state;
 	  switch (this.state) {
 	    case "GAMEPLAY":
-	    this.game = new Game();
-	    break;
+	      this.game = new Game();
+	      break;
 	
 	    case "DEATH":
-	    this.death = new DeathScreen();
-	    break;
+	      this.death = new DeathScreen();
+	      break;
 	
 	    case "TITLE":
-	    this.title = new Title();
-	    break;
+	      this.title = new Title();
+	      break;
 	  }
 	
 	};
@@ -146,40 +146,41 @@
 	
 	App.prototype.onMouseMove = function(e) {
 	  e.preventDefault();
-	  if (!document.pointerLockElement) {
-	    return false;
-	  } else {
+	  if (document.pointerLockElement || document.mozPointerLockElement) {
 	    switch (this.state) {
 	      case "GAMEPLAY":
 	        this.game.onMouseMove(e.movementX, e.movementY);
 	        break;
 	    }
+	  } else {
+	    return false;
 	  }
+	
 	};
 	
 	App.prototype.onMouseDown = function(e) {
 	  e.preventDefault();
-	  if (!document.pointerLockElement) {
-	    GFX.element.requestPointerLock();
-	  } else {
+	  if (document.pointerLockElement || document.mozPointerLockElement) {
 	    switch (this.state) {
 	      case "GAMEPLAY":
 	        this.game.onMouseDown(e.button);
 	        break;
 	    }
+	  } else {
+	    GFX.element.requestPointerLock();
 	  }
 	};
 	
 	App.prototype.onMouseUp = function(e) {
 	  e.preventDefault();
-	  if (!document.pointerLockElement) {
-	    return false;
-	  } else {
+	  if (document.pointerLockElement || document.mozPointerLockElement) {
 	    switch (this.state) {
 	      case "GAMEPLAY":
 	        this.game.onMouseUp(e.button);
 	        break;
 	    }
+	  } else {
+	    return false;
 	  }
 	};
 	
@@ -239,6 +240,9 @@
 	  precision: "lowp",
 	  antialias: false
 	});
+	renderer.domElement.requestPointerLock =
+	  renderer.domElement.requestPointerLock ||
+	  renderer.domElement.mozRequestPointerLock;
 	
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.domElement.style.position = "absolute";

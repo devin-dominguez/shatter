@@ -19,6 +19,9 @@ var renderer= new THREE.WebGLRenderer({
   precision: "lowp",
   antialias: false
 });
+renderer.domElement.requestPointerLock =
+  renderer.domElement.requestPointerLock ||
+  renderer.domElement.mozRequestPointerLock;
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.style.position = "absolute";
