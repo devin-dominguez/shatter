@@ -1,6 +1,6 @@
 module.exports = {
-  width: 768,
-  depth: 768,
+  width: 1024,
+  depth: 1024,
   height: 64,
   numTiles: 12,
 

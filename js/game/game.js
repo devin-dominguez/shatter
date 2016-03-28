@@ -19,6 +19,7 @@ function Game() {
   this.gameSpeed = 1;
   this.fov = 75;
 
+
   this.field = new PotentialField();
   this.terrain = new Terrain();
   this.player = new Player(this.field);
@@ -27,14 +28,7 @@ function Game() {
 
   this.setupOverlay();
 
-  for (var i = 0; i < 12; i++) {
-    Drone.spawn(
-        Math.random() * World.width,
-        Math.random() * World.depth,
-        0 | Math.pow(Math.random(), 1.5) * 8 + 1,
-        this.field
-        );
-  }
+  this.spawnWave();
 }
 
 Game.prototype.end = function() {
@@ -49,8 +43,10 @@ Game.prototype.end = function() {
 };
 
 Game.prototype.update = function(dt) {
+  GameData.currentScore += dt;
+
   if (GameData.slow) {
-    this.fov = this.fov + 0.004 * (179 -  this.fov);
+    this.fov = this.fov + 0.0025 * (179 -  this.fov);
     this.gameSpeed = this.gameSpeed + 0.01 * (GameData.slowFactor - this.gameSpeed);
   } else {
     this.fov = this.fov + 0.25 * (75 -  this.fov);
@@ -72,6 +68,11 @@ Game.prototype.update = function(dt) {
   Entity.cullAll(Drone);
   Entity.cullAll(ExplosionParticle);
 
+  if (Drone.all.length <= this.numDrones / 4) {
+    GameData.nextLevel();
+    this.spawnWave();
+  }
+
   var bgColor = new THREE.Color(World.bgColor);
   bgColor.lerp(new THREE.Color(World.deathColor), 1 - (GameData.health / 100));
   GFX.setBgColor(bgColor);
@@ -85,6 +86,26 @@ Game.prototype.update = function(dt) {
   this.updateOverlay();
 
   GameData.update(dt);
+
+};
+
+Game.prototype.spawnWave = function() {
+  var level = GameData.level;
+  this.numDrones = level * 2 + 6;
+  var radius = Math.sqrt(Math.pow(World.width, 2) + Math.pow(World.depth, 2));
+
+  for (var i = 0; i < this.numDrones; i++) {
+    var angle = (i / this.numDrones) * Math.PI * 8;
+    var offset = (i / this.numDrones) * radius * 0.5;
+    var x = Math.cos(angle) * (radius + offset);
+    x += World.width / 2;
+    var z = Math.sin(angle) * (radius + offset);
+    z += World.depth / 2;
+    var droneLevel = Math.pow((i / this.numDrones), 12) * level;
+    droneLevel = Math.floor(droneLevel) + 1;
+
+    Drone.spawn(x, z, droneLevel, this.field);
+  }
 };
 
 Game.prototype.setupOverlay = function() {

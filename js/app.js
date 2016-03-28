@@ -1,5 +1,6 @@
 var GFX = require('./gfx');
 var Game = require('./game/game');
+var GameData = require('./game/gameData');
 
 function App() {
   this.lastTime = window.performance.now();
@@ -43,10 +44,12 @@ App.prototype.update = function() {
   switch (this.state) {
     case "GAMEPLAY":
       this.game.update(dt);
+      if (GameData.done) {
+        this.setState("DEATH");
+      }
       break;
   }
 };
-
 
 App.prototype.onMouseMove = function(e) {
   e.preventDefault();

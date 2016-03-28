@@ -12,7 +12,8 @@ var maxHealth = 12;
 var maxLevel = 8;
 
 var maxSpeed = 120;
-var rotRate = 0.1;
+var normalSpeed = 120;
+var rotRate = 0.01;
 
 function Drone(x, z, level, field) {
   this.inBounds = false;
@@ -93,19 +94,28 @@ Drone.prototype.findTargetPosition = function() {
 
   for (var x = -1; x <= 1; x++) {
     for (var z = -1; z <= 1; z++) {
-      var fX = Math.max(0, Math.min(this.fieldX + x, this.field.width - 1));
-      var fZ = Math.max(0, Math.min(this.fieldZ + z, this.field.depth - 1));
+      var fX = this.fieldX + x;
+      var fZ = this.fieldZ + z;
+      var fieldValue;
+      if ((fX > 0 && fX < this.field.width) &&
+          (fZ > 0 && fZ < this.field.depth) ||
+          (x === 0 && z === 0)) {
 
-      if (!bestVal || this.field.field[fX][fZ] < bestVal) {
-        bestVal = this.field.field[fX][fZ];
+        fieldValue = this.field.field[fX][fZ];
+      } else {
+        continue;
+      }
+
+      if (!bestVal || fieldValue < bestVal) {
+        bestVal = fieldValue;
         fieldTargetX = fX;
         fieldTargetZ = fZ;
       }
     }
   }
 
-  this.targetX = (fieldTargetX / this.field.width) * World.width;
-  this.targetZ = (fieldTargetZ / this.field.depth) * World.depth;
+  this.targetX = ((fieldTargetX) / this.field.width) * World.width;
+  this.targetZ = ((fieldTargetZ) / this.field.depth) * World.depth;
 };
 
 Drone.prototype.rotate = function(dt) {
@@ -149,9 +159,11 @@ Drone.prototype.update = function(dt) {
   this.checkBounds();
   if (this.inBounds) {
     this.findTargetPosition();
+    this.speed = normalSpeed;
   } else {
     this.targetX = World.width / 2;
     this.targetZ = World.depth / 2;
+    this.speed = maxSpeed;
   }
 
   this.rotate(dt);
