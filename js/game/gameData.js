@@ -1,9 +1,7 @@
 var GameData = {};
 GameData.bestScore = 0;
-GameData.slowFactor = 8;
 
 GameData.init = function() {
-  this.slow = false;
   this.done = false;
   this.health = 100;
   this.currentScore = 0;
@@ -18,13 +16,12 @@ GameData.playerHit = function(droneLevel) {
   this.health -= 16 + droneLevel * 2;
 };
 
-GameData.update = function(dt) {
-  var drain = 1 + this.level * 0.0625;
-  if (this.slow) {
-    this.health -= drain * dt * Math.pow(GameData.slowFactor, 2) * 0.125;
-  } else {
-    this.health -= drain * dt;
+GameData.update = function(dt, slow) {
+  if (!slow) {
+    this.currentScore += 0 | (Math.pow(2, this.level / 5) * dt * 10000);
   }
+  var drain = 1 + this.level * 0.03125;
+  this.health -= drain * dt;
   this.health = Math.max(0, Math.min(100, this.health));
   if (this.health === 0) {
     this.done = true;

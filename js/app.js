@@ -10,8 +10,10 @@ function App() {
 
   document.addEventListener("keydown", this.onKeyDown.bind(this), true);
   document.addEventListener("keyup", this.onKeyUp.bind(this), true);
-  GFX.element.addEventListener("mousedown", this.onMouseDown.bind(this), true);
-  GFX.element.addEventListener("mouseup", this.onMouseUp.bind(this), true);
+  document.addEventListener("mousedown", this.onMouseDown.bind(this), true);
+  document.addEventListener("mouseup", this.onMouseUp.bind(this), true);
+  //GFX.element.addEventListener("mousedown", this.onMouseDown.bind(this), true);
+  //GFX.element.addEventListener("mouseup", this.onMouseUp.bind(this), true);
   GFX.element.addEventListener("mousemove", this.onMouseMove.bind(this), true);
 
   this.setState("TITLE");
@@ -26,6 +28,8 @@ App.prototype.setState = function(state) {
     case "GAMEPLAY":
       this.game.end();
       delete this.game;
+      document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+      document.exitPointerLock();
       break;
 
     case "DEATH":
@@ -89,14 +93,24 @@ App.prototype.onMouseMove = function(e) {
 
 App.prototype.onMouseDown = function(e) {
   e.preventDefault();
-  if (document.pointerLockElement || document.mozPointerLockElement) {
-    switch (this.state) {
-      case "GAMEPLAY":
-        this.game.onMouseDown(e.button);
-        break;
-    }
-  } else {
-    GFX.element.requestPointerLock();
+  switch (this.state) {
+    case "TITLE":
+      if (!document.pointerLockElement || !document.mozPointerLockElement) {
+        GFX.element.requestPointerLock();
+      }
+      this.setState("GAMEPLAY");
+      break;
+
+    case "GAMEPLAY":
+      if (!document.pointerLockElement || !document.mozPointerLockElement) {
+        GFX.element.requestPointerLock();
+      }
+      this.game.onMouseDown(e.button);
+      break;
+
+    case "DEATH":
+      this.setState("TITLE");
+      break;
   }
 };
 
@@ -118,16 +132,6 @@ App.prototype.onKeyDown = function(e) {
   switch (this.state) {
     case "GAMEPLAY":
       this.game.onKeyDown(e.keyCode);
-      break;
-    case "DEATH":
-      if (e.keyCode === 13) {
-        this.setState("TITLE");
-      }
-      break;
-    case "TITLE":
-      if (e.keyCode === 13) {
-        this.setState("GAMEPLAY");
-      }
       break;
   }
 };
