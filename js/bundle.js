@@ -81,8 +81,10 @@
 	
 	  document.addEventListener("keydown", this.onKeyDown.bind(this), true);
 	  document.addEventListener("keyup", this.onKeyUp.bind(this), true);
-	  GFX.element.addEventListener("mousedown", this.onMouseDown.bind(this), true);
-	  GFX.element.addEventListener("mouseup", this.onMouseUp.bind(this), true);
+	  document.addEventListener("mousedown", this.onMouseDown.bind(this), true);
+	  document.addEventListener("mouseup", this.onMouseUp.bind(this), true);
+	  //GFX.element.addEventListener("mousedown", this.onMouseDown.bind(this), true);
+	  //GFX.element.addEventListener("mouseup", this.onMouseUp.bind(this), true);
 	  GFX.element.addEventListener("mousemove", this.onMouseMove.bind(this), true);
 	
 	  this.setState("TITLE");
@@ -97,6 +99,8 @@
 	    case "GAMEPLAY":
 	      this.game.end();
 	      delete this.game;
+	      document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+	      document.exitPointerLock();
 	      break;
 	
 	    case "DEATH":
@@ -160,14 +164,24 @@
 	
 	App.prototype.onMouseDown = function(e) {
 	  e.preventDefault();
-	  if (document.pointerLockElement || document.mozPointerLockElement) {
-	    switch (this.state) {
-	      case "GAMEPLAY":
-	        this.game.onMouseDown(e.button);
-	        break;
-	    }
-	  } else {
-	    GFX.element.requestPointerLock();
+	  switch (this.state) {
+	    case "TITLE":
+	      if (!document.pointerLockElement || !document.mozPointerLockElement) {
+	        GFX.element.requestPointerLock();
+	      }
+	      this.setState("GAMEPLAY");
+	      break;
+	
+	    case "GAMEPLAY":
+	      if (!document.pointerLockElement || !document.mozPointerLockElement) {
+	        GFX.element.requestPointerLock();
+	      }
+	      this.game.onMouseDown(e.button);
+	      break;
+	
+	    case "DEATH":
+	      this.setState("TITLE");
+	      break;
 	  }
 	};
 	
@@ -189,16 +203,6 @@
 	  switch (this.state) {
 	    case "GAMEPLAY":
 	      this.game.onKeyDown(e.keyCode);
-	      break;
-	    case "DEATH":
-	      if (e.keyCode === 13) {
-	        this.setState("TITLE");
-	      }
-	      break;
-	    case "TITLE":
-	      if (e.keyCode === 13) {
-	        this.setState("GAMEPLAY");
-	      }
 	      break;
 	  }
 	};
@@ -40886,19 +40890,19 @@
 	  this.overlay.instructions.style.flexDirection = "column";
 	
 	  this.overlay.move = document.createElement("span");
-	  this.overlay.move.innerHTML = "&nbsp;WASD = MOVE";
+	  this.overlay.move.innerHTML = "MOVE = WASD";
 	
 	  this.overlay.look = document.createElement("span");
-	  this.overlay.look.innerHTML = "MOUSE = LOOK";
+	  this.overlay.look.innerHTML = "LOOK = MOUSE or ARROW_KEYS";
 	
 	  this.overlay.shoot = document.createElement("span");
-	  this.overlay.shoot.innerHTML = "CLICK = SHOOT";
+	  this.overlay.shoot.innerHTML = "FIRE = CLICK or SPACE";
 	
 	  this.overlay.warp = document.createElement("span");
-	  this.overlay.warp.innerHTML = "SPACE = TIMEWARP";
+	  this.overlay.warp.innerHTML = "WARP = SHIFT";
 	
 	  this.overlay.start = document.createElement("span");
-	  this.overlay.start.innerHTML = "ENTER = BEGIN";
+	  this.overlay.start.innerHTML = "CLICK to BEGIN";
 	
 	
 	  this.overlay.instructions.appendChild(this.overlay.move);
@@ -40940,6 +40944,8 @@
 	function Game() {
 	  GameData.init();
 	
+	  this.slow = false;
+	  this.slowFactor =  180;
 	  this.gameSpeed = 1;
 	  this.fov = 75;
 	
@@ -40967,14 +40973,14 @@
 	};
 	
 	Game.prototype.update = function(dt) {
-	  GameData.currentScore += dt;
+	  GameData.update(dt, this.slow);
 	
-	  if (GameData.slow) {
-	    this.fov = this.fov + 0.0025 * (179 -  this.fov);
-	    this.gameSpeed = this.gameSpeed + 0.01 * (GameData.slowFactor - this.gameSpeed);
+	  if (this.slow) {
+	    this.fov = this.fov + 0.00125 * (179 - this.fov);
+	    this.gameSpeed = this.gameSpeed + 0.0005 * (this.slowFactor - this.gameSpeed);
 	  } else {
 	    this.fov = this.fov + 0.25 * (75 -  this.fov);
-	    this.gameSpeed = this.gameSpeed + 0.1 * (1.0 - this.gameSpeed);
+	    this.gameSpeed = this.gameSpeed + 0.25 * (1.0 - this.gameSpeed);
 	  }
 	
 	  dt /= this.gameSpeed;
@@ -40992,7 +40998,7 @@
 	  Entity.cullAll(Drone);
 	  Entity.cullAll(ExplosionParticle);
 	
-	  if (Drone.all.length <= this.numDrones * 0.5) {
+	  if (Drone.all.length <= this.numDrones * 0.666) {
 	    GameData.nextLevel();
 	    this.spawnWave();
 	  }
@@ -41009,18 +41015,17 @@
 	  GFX.render();
 	  this.updateOverlay();
 	
-	  GameData.update(dt);
 	
 	};
 	
 	Game.prototype.spawnWave = function() {
 	  var level = GameData.level;
 	  this.numDrones = level * 2 + 6;
-	  var radius = Math.sqrt(Math.pow(World.width, 2) + Math.pow(World.depth, 2));
+	  var radius = 0.5 * Math.sqrt(Math.pow(World.width, 2) + Math.pow(World.depth, 2));
 	
 	  for (var i = 0; i < this.numDrones; i++) {
 	    var angle = (i / this.numDrones) * Math.PI * 8;
-	    var offset = (i / this.numDrones) * radius * 0.5;
+	    var offset = (i / this.numDrones) * radius * 2;
 	    var x = Math.cos(angle) * (radius + offset);
 	    x += World.width / 2;
 	    var z = Math.sin(angle) * (radius + offset);
@@ -41074,16 +41079,16 @@
 	};
 	
 	Game.prototype.onKeyDown = function(key) {
-	  if (key === 32) {
-	    GameData.slow = true;
+	  if (key === 16) {
+	    this.slow = true;
 	  } else {
 	    this.player.onKeyDown(key);
 	  }
 	};
 	
 	Game.prototype.onKeyUp = function(key) {
-	  if (key === 32) {
-	    GameData.slow = false;
+	  if (key === 16) {
+	    this.slow = false;
 	  } else {
 	    this.player.onKeyUp(key);
 	  }
@@ -41117,10 +41122,8 @@
 
 	var GameData = {};
 	GameData.bestScore = 0;
-	GameData.slowFactor = 8;
 	
 	GameData.init = function() {
-	  this.slow = false;
 	  this.done = false;
 	  this.health = 100;
 	  this.currentScore = 0;
@@ -41135,13 +41138,12 @@
 	  this.health -= 16 + droneLevel * 2;
 	};
 	
-	GameData.update = function(dt) {
-	  var drain = 1 + this.level * 0.0625;
-	  if (this.slow) {
-	    this.health -= drain * dt * Math.pow(GameData.slowFactor, 2) * 0.125;
-	  } else {
-	    this.health -= drain * dt;
+	GameData.update = function(dt, slow) {
+	  if (!slow) {
+	    this.currentScore += 0 | (Math.pow(2, this.level / 5) * dt * 10000);
 	  }
+	  var drain = 1 + this.level * 0.03125;
+	  this.health -= drain * dt;
 	  this.health = Math.max(0, Math.min(100, this.health));
 	  if (this.health === 0) {
 	    this.done = true;
@@ -41378,10 +41380,12 @@
 	
 	  this.dX = 0;
 	  this.dY = 0;
+	  this.lookSpeed = 0.002;
 	
 	  this.fireDelay = 1;
 	  this.firing = false;
 	  this.moving = {};
+	  this.looking = {};
 	
 	  this.setupObject();
 	
@@ -41452,8 +41456,16 @@
 	};
 	
 	Player.prototype.look = function(dt) {
-	  this.head.rotation.x -= this.dY * 0.002;
-	  this.object.rotation.y -= this.dX * 0.002;
+	  var lookX = this.dY * this.lookSpeed;
+	  var lookY = this.dX * this.lookSpeed;
+	
+	  if (this.looking.up) { lookX += -this.lookSpeed * 10; }
+	  if (this.looking.down) { lookX += this.lookSpeed * 10; }
+	  if (this.looking.left) { lookY += -this.lookSpeed * 30; }
+	  if (this.looking.right) { lookY += this.lookSpeed * 30; }
+	
+	  this.head.rotation.x -= lookX;
+	  this.object.rotation.y -= lookY;
 	
 	  this.head.rotation.x = Math.max(-Math.PI / 6,
 	      Math.min( Math.PI / 6, this.head.rotation.x));
@@ -41519,6 +41531,23 @@
 	    case 68:
 	      this.moving.right = true;
 	      break;
+	
+	    case 38:
+	      this.looking.up = true;
+	      break;
+	    case 40:
+	      this.looking.down = true;
+	      break;
+	    case 37:
+	      this.looking.left = true;
+	      break;
+	    case 39:
+	      this.looking.right = true;
+	      break;
+	
+	    case 32:
+	      this.firing = true;
+	      break;
 	  }
 	};
 	
@@ -41535,6 +41564,23 @@
 	      break;
 	    case 68:
 	      this.moving.right = false;
+	      break;
+	
+	    case 38:
+	      this.looking.up = false;
+	      break;
+	    case 40:
+	      this.looking.down = false;
+	      break;
+	    case 37:
+	      this.looking.left = false;
+	      break;
+	    case 39:
+	      this.looking.right = false;
+	      break;
+	
+	    case 32:
+	      this.firing = false;
 	      break;
 	  }
 	};
@@ -41963,13 +42009,13 @@
 	  this.overlay.scoreContainer = document.createElement("div");
 	
 	  this.overlay.score = document.createElement("span");
-	  this.overlay.score.innerHTML = "TIME = " + GameData.currentScore.toFixed(2) + " ";
+	  this.overlay.score.innerHTML = "SCORE = " + GameData.currentScore.toFixed(0) + " ";
 	
 	  this.overlay.best = document.createElement("span");
-	  this.overlay.best.innerHTML = "BEST = " + GameData.bestScore.toFixed(2);
+	  this.overlay.best.innerHTML = "BEST = " + GameData.bestScore.toFixed(0);
 	
 	  this.overlay.next = document.createElement("span");
-	  this.overlay.next.innerHTML = "PRESS ENTER TO CONTINUE";
+	  this.overlay.next.innerHTML = "CLICK to CONTINUE";
 	
 	  this.overlay.scoreContainer.appendChild(this.overlay.score);
 	  this.overlay.scoreContainer.appendChild(this.overlay.best);
