@@ -20,10 +20,12 @@ function Player(field) {
 
   this.dX = 0;
   this.dY = 0;
+  this.lookSpeed = 0.002;
 
   this.fireDelay = 1;
   this.firing = false;
   this.moving = {};
+  this.looking = {};
 
   this.setupObject();
 
@@ -94,8 +96,16 @@ Player.prototype.move = function(dt) {
 };
 
 Player.prototype.look = function(dt) {
-  this.head.rotation.x -= this.dY * 0.002;
-  this.object.rotation.y -= this.dX * 0.002;
+  var lookX = this.dY * this.lookSpeed;
+  var lookY = this.dX * this.lookSpeed;
+
+  if (this.looking.up) { lookX += -this.lookSpeed * 10; }
+  if (this.looking.down) { lookX += this.lookSpeed * 10; }
+  if (this.looking.left) { lookY += -this.lookSpeed * 30; }
+  if (this.looking.right) { lookY += this.lookSpeed * 30; }
+
+  this.head.rotation.x -= lookX;
+  this.object.rotation.y -= lookY;
 
   this.head.rotation.x = Math.max(-Math.PI / 6,
       Math.min( Math.PI / 6, this.head.rotation.x));
@@ -161,6 +171,23 @@ Player.prototype.onKeyDown = function(key) {
     case 68:
       this.moving.right = true;
       break;
+
+    case 38:
+      this.looking.up = true;
+      break;
+    case 40:
+      this.looking.down = true;
+      break;
+    case 37:
+      this.looking.left = true;
+      break;
+    case 39:
+      this.looking.right = true;
+      break;
+
+    case 32:
+      this.firing = true;
+      break;
   }
 };
 
@@ -177,6 +204,23 @@ Player.prototype.onKeyUp = function(key) {
       break;
     case 68:
       this.moving.right = false;
+      break;
+
+    case 38:
+      this.looking.up = false;
+      break;
+    case 40:
+      this.looking.down = false;
+      break;
+    case 37:
+      this.looking.left = false;
+      break;
+    case 39:
+      this.looking.right = false;
+      break;
+
+    case 32:
+      this.firing = false;
       break;
   }
 };

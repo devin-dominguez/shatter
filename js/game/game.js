@@ -16,6 +16,8 @@ var ExplosionParticle = require('./entities/explosionParticle');
 function Game() {
   GameData.init();
 
+  this.slow = false;
+  this.slowFactor =  180;
   this.gameSpeed = 1;
   this.fov = 75;
 
@@ -43,14 +45,14 @@ Game.prototype.end = function() {
 };
 
 Game.prototype.update = function(dt) {
-  GameData.currentScore += dt;
+  GameData.update(dt, this.slow);
 
-  if (GameData.slow) {
-    this.fov = this.fov + 0.0025 * (179 -  this.fov);
-    this.gameSpeed = this.gameSpeed + 0.01 * (GameData.slowFactor - this.gameSpeed);
+  if (this.slow) {
+    this.fov = this.fov + 0.00125 * (179 - this.fov);
+    this.gameSpeed = this.gameSpeed + 0.0005 * (this.slowFactor - this.gameSpeed);
   } else {
     this.fov = this.fov + 0.25 * (75 -  this.fov);
-    this.gameSpeed = this.gameSpeed + 0.1 * (1.0 - this.gameSpeed);
+    this.gameSpeed = this.gameSpeed + 0.25 * (1.0 - this.gameSpeed);
   }
 
   dt /= this.gameSpeed;
@@ -68,7 +70,7 @@ Game.prototype.update = function(dt) {
   Entity.cullAll(Drone);
   Entity.cullAll(ExplosionParticle);
 
-  if (Drone.all.length <= this.numDrones * 0.5) {
+  if (Drone.all.length <= this.numDrones * 0.666) {
     GameData.nextLevel();
     this.spawnWave();
   }
@@ -85,18 +87,17 @@ Game.prototype.update = function(dt) {
   GFX.render();
   this.updateOverlay();
 
-  GameData.update(dt);
 
 };
 
 Game.prototype.spawnWave = function() {
   var level = GameData.level;
   this.numDrones = level * 2 + 6;
-  var radius = Math.sqrt(Math.pow(World.width, 2) + Math.pow(World.depth, 2));
+  var radius = 0.5 * Math.sqrt(Math.pow(World.width, 2) + Math.pow(World.depth, 2));
 
   for (var i = 0; i < this.numDrones; i++) {
     var angle = (i / this.numDrones) * Math.PI * 8;
-    var offset = (i / this.numDrones) * radius * 0.5;
+    var offset = (i / this.numDrones) * radius * 2;
     var x = Math.cos(angle) * (radius + offset);
     x += World.width / 2;
     var z = Math.sin(angle) * (radius + offset);
@@ -150,16 +151,16 @@ Game.prototype.onMouseUp = function(button) {
 };
 
 Game.prototype.onKeyDown = function(key) {
-  if (key === 32) {
-    GameData.slow = true;
+  if (key === 16) {
+    this.slow = true;
   } else {
     this.player.onKeyDown(key);
   }
 };
 
 Game.prototype.onKeyUp = function(key) {
-  if (key === 32) {
-    GameData.slow = false;
+  if (key === 16) {
+    this.slow = false;
   } else {
     this.player.onKeyUp(key);
   }
