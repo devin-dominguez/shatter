@@ -17,8 +17,11 @@ var camera = new THREE.PerspectiveCamera(
 
 var renderer= new THREE.WebGLRenderer({
   precision: "lowp",
-  antialias: false
+  antiAlias: false
 });
+
+renderer.setPixelRatio(1);
+
 renderer.domElement.requestPointerLock =
   renderer.domElement.requestPointerLock ||
   renderer.domElement.mozRequestPointerLock;
