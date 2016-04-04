@@ -242,8 +242,11 @@
 	
 	var renderer= new THREE.WebGLRenderer({
 	  precision: "lowp",
-	  antialias: false
+	  antiAlias: false
 	});
+	
+	renderer.setPixelRatio(1);
+	
 	renderer.domElement.requestPointerLock =
 	  renderer.domElement.requestPointerLock ||
 	  renderer.domElement.mozRequestPointerLock;
@@ -40889,19 +40892,19 @@
 	  this.overlay.instructions.style.display = "flex";
 	  this.overlay.instructions.style.flexDirection = "column";
 	
-	  this.overlay.move = document.createElement("span");
+	  this.overlay.move = document.createElement("small");
 	  this.overlay.move.innerHTML = "MOVE = WASD";
 	
-	  this.overlay.look = document.createElement("span");
+	  this.overlay.look = document.createElement("small");
 	  this.overlay.look.innerHTML = "LOOK = MOUSE or ARROW_KEYS";
 	
-	  this.overlay.shoot = document.createElement("span");
+	  this.overlay.shoot = document.createElement("small");
 	  this.overlay.shoot.innerHTML = "FIRE = CLICK or SPACE";
 	
-	  this.overlay.warp = document.createElement("span");
+	  this.overlay.warp = document.createElement("small");
 	  this.overlay.warp.innerHTML = "WARP = SHIFT";
 	
-	  this.overlay.start = document.createElement("span");
+	  this.overlay.start = document.createElement("small");
 	  this.overlay.start.innerHTML = "CLICK to BEGIN";
 	
 	
@@ -42008,13 +42011,13 @@
 	
 	  this.overlay.scoreContainer = document.createElement("div");
 	
-	  this.overlay.score = document.createElement("span");
+	  this.overlay.score = document.createElement("small");
 	  this.overlay.score.innerHTML = "SCORE = " + GameData.currentScore.toFixed(0) + " ";
 	
-	  this.overlay.best = document.createElement("span");
+	  this.overlay.best = document.createElement("small");
 	  this.overlay.best.innerHTML = "BEST = " + GameData.bestScore.toFixed(0);
 	
-	  this.overlay.next = document.createElement("span");
+	  this.overlay.next = document.createElement("small");
 	  this.overlay.next.innerHTML = "CLICK to CONTINUE";
 	
 	  this.overlay.scoreContainer.appendChild(this.overlay.score);
