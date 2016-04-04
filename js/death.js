@@ -20,13 +20,13 @@ DeathScreen.prototype.setupOverlay = function() {
 
   this.overlay.scoreContainer = document.createElement("div");
 
-  this.overlay.score = document.createElement("span");
+  this.overlay.score = document.createElement("small");
   this.overlay.score.innerHTML = "SCORE = " + GameData.currentScore.toFixed(0) + " ";
 
-  this.overlay.best = document.createElement("span");
+  this.overlay.best = document.createElement("small");
   this.overlay.best.innerHTML = "BEST = " + GameData.bestScore.toFixed(0);
 
-  this.overlay.next = document.createElement("span");
+  this.overlay.next = document.createElement("small");
   this.overlay.next.innerHTML = "CLICK to CONTINUE";
 
   this.overlay.scoreContainer.appendChild(this.overlay.score);

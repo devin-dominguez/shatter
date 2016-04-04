@@ -1,29 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link href='https://fonts.googleapis.com/css?family=Cousine:700' rel='stylesheet' type='text/css'>
-  <meta charset="UTF-8">
-  <title></title>
-  <script src="./js/bundle.js"></script>
-</head>
-<body>
-  <style>
-    body, body * {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      font-family: 'Cousine';
-    }
+  <head>
+    <link rel="stylesheet" href="style/fonts.css">
+    <link rel="stylesheet" href="style/reset.css">
+    <link rel="stylesheet" href="style/style.css">
+    <meta charset="UTF-8">
+    <title>Shatter</title>
+  </head>
+  <body>
 
-    h1 {
-      font-size: 120px;
-      color: black;
-    }
-    span {
-      font-size: 12px;
-      color: black;
-    }
-  </style>
+    <div class="content">
+      <h1 class="title">SHATTER</h1>
+      <section class="primary video">
+          <iframe class="video-container" src="https://player.vimeo.com/video/161406534?color=8888cc&title=0&portrait=0&byline=0" width="640" height="358" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        <a class="play" href="game.html" target="_blank">PLAY GAME</a>
+      </section>
+      <section class="primary">
+        <p>
+        Shatter is an a fast-paced 3D arcade game that plays like a cross between <a target="_blank" href="https://en.wikipedia.org/wiki/Robotron:_2084">Robotron: 2084</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Doom_(1993_video_game)">Doom</a> with a visual style inspired by the likes of <a target="_blank" href="https://en.wikipedia.org/wiki/Battlezone_(1980_video_game)">Battlezone</a> and <a target="_blank" href="https://en.wikipedia.org/wiki/Spectre_(video_game)">Spectre</a>.
+        </p>
+      </section>
+      <section class="primary">
+        <h2>How To Play</h2>
+        <section class="subsection">
+          <h3>Gameplay</h3>
 
-</body>
+          <p>
+          In Shatter the goal is to stay alive for as long as possible. You have a limited amount of energy (shown at the top of the screen) and when it runs out it's GAME OVER. To keep things interesting your energy will constantly drain as you play.
+          </p>
+
+          <p>
+          To make matters worse you will also have to deal with waves of enemies trying to run into you. Every time you collide with an enemy you lose some of your precious energy. Fortunately, you can gain energy back by shooting down enemies before they reach you.
+          </p>
+
+          <p>
+          If you feel overwhelmed you can use your special <em>Time Warp</em> ability to slow down time and give yourself a chance to escape.
+          </p>
+        </section>
+        <section class="subsection">
+          <h3>Controls</h3>
+          <h4>Move</h4>
+          <p>You can use the <em>[WASD] keys</em> to move around the game arena</p>
+
+          <h4>Look</h4>
+          <p>
+          You can move the <em>mouse</em> to look around the game arena. When you first click on the game screen you might be prompted to confirm that you wish to hide the mouse cursor. Click yes (or whatever the confimation choice is). To get your cursor back you can press the escape key. Alternatively, you can use the <em>arrow keys</em> to look around the arena.
+          </p>
+          <h4>Shoot</h4>
+          <p>
+          You can hold down either the <em>mouse button</em> or <em>space bar</em> to fire off a stream of projectiles.
+          </p>
+
+          <h4>Time Warp</h4>
+          <p>
+          Holding down the <em>shift key</em> will cause time to slow down. This is useful when you fnd yourself surrounded by enemies and need to plan an escape route.
+          </p>
+        </section>
+      </section>
+    </div>
+
+
+  </body>
 </html>
