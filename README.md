@@ -1,5 +1,5 @@
 # SHATTER
-Shatter is a fast-paced abstract arena shooter. It's like a first-person version of Robotron or Geometry wars. Shatter was made using the wonderful [three.js]() library.
+Shatter is a fast-paced abstract arena shooter. It's like a first-person version of [Robotron](https://en.wikipedia.org/wiki/Robotron:_2084) or [Geometry wars](https://en.wikipedia.org/wiki/Geometry_Wars). Shatter was made using the wonderful [three.js](http://threejs.org/) library.
 
 You can play Shatter [here](https://devin-dominguez.github.io/shatter)
 
