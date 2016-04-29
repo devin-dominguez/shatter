@@ -19,7 +19,7 @@ This approach allows shatter to explode any triangle based 3D geometry in a sati
 
 ### Time-Warp
 
-All movement related calculations are done using delta time or dt. Delta time is the elapsed time between the current frame and the previous frame. Instead of moving an object 8 units a frame using code like this: `this.x += 8` dt allows us to specify a speed that an object should move in terms of time. To move an object 32 units a second would look like `this.x += 32 * dt`. This ensures that even if the framerate is not consistent that the object will move the necessary distance in the expected time.
+All movement related calculations are done using delta time or dt. Delta time is the elapsed time between the current frame and the previous frame. Instead of moving an object 8 units a frame using code like this: `position.x += 8` dt allows us to specify a speed that an object should move in terms of time. To move an object 32 units a second would look like `position.x += 32 * dt`. This ensures that even if the framerate is not consistent that the object will move the necessary distance in the expected time.
 
 Another neat feature of using dt in all time calculations is that it becomes simple to change the rate of all motion in the game just by applying some sort of scalar to dt. If one were to do something like `dt *= 0.25` the game would run at a quarter speed while still maintaining its original frame rate.
 
@@ -27,7 +27,7 @@ In Shatter the player has the ability to change the scale of dt while playing to
 
 ### Artificial Intelligence
 
-The movement of the enemies in Shatter is determined using a "potential field" style AI system. The game terrain is divided into a grid of equally sized cells. Each cell has a value assigned to it based on its distance from the enemies and the player. Every enemy's distance is added to the cell while the player's distance is subtracted from it. During each step of the game each enemy scans its neighboring cells and moves to the one with the lowest value. This ensures that the enemies will tend to move toward the player but also try to take a route that avoids other enemies. The tricky part about this sort of AI strategy is weighting the player and enemy distances when calculating a cell's value to achieve the optimal balance of aggression and avoidance.
+The movement of the enemies in Shatter is determined using a _potential field_ AI system. The game terrain is divided into a grid of equally sized cells. Each cell has a value assigned to it based on its distance from the enemies and the player. Every enemy's distance is added to the cell while the player's distance is subtracted from it. During each step of the game each enemy scans its neighboring cells and moves to the one with the lowest value. This ensures that the enemies will tend to move toward the player but also try to take a route that avoids other enemies. The tricky part about this sort of AI strategy is weighting the player and enemy distances when calculating a cell's value to achieve the optimal balance of aggression and avoidance.
 
 ## Upcoming Features
 - Refactor, refactor, refactor
